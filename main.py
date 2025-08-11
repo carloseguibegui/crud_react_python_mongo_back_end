@@ -78,7 +78,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 # Endpoint de autenticación (MongoDB)
 @app.post("/api/v1/auth/login")
 async def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str]:
-    user = await db.user.find_one({"username": username})
+    user = await db.users.find_one({"username": username})
     if not user or not verify_password(password, user["password"]):  # Verificar contraseña
         raise HTTPException(status_code=400, detail="Credenciales inválidas")
 
@@ -102,19 +102,19 @@ def upload_file(file: UploadFile) -> Dict[str, str]:
 # Endpoint para registrar usuarios (MongoDB)
 @app.post("/api/v1/auth/register")
 async def register(username: str = Form(...), password: str = Form(...)):
-    existing_user = await db.user.find_one({"username": username})
+    existing_user = await db.users.find_one({"username": username})
     if existing_user:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
     hashed_password = hash_password(password)  # Cifrar la contraseña
     new_user = {"username": username, "password": hashed_password}
-    await db.user.insert_one(new_user)
+    await db.users.insert_one(new_user)
     return {"message": "Usuario registrado exitosamente"}
 
 # Endpoint para obtener todos los usuarios (ejemplo)
 @app.get("/api/v1/users")
 async def get_users() -> Dict[str, Any]:
-    users = await db.user.find().to_list(length=100)  # Limitar a 100 usuarios
+    users = await db.users.find().to_list(length=100)  # Limitar a 100 usuarios
     for user in users:
         user["_id"] = str(user["_id"])
     return {"users": users}
