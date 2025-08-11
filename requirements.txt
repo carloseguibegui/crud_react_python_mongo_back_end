@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+python-multipart
+motor
+faker
+exceptiongroup
+python-jose
+python-dotenv
+bcrypt
