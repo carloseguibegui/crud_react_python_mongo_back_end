@@ -131,9 +131,9 @@ async def get_users() -> Dict[str, Any]:
     return {"users": users}
 
 @app.get("/api/v1/db-status")
-async def db_status() -> Dict[str, Any]:
+def db_status() -> Dict[str, Any]:
     try:
-        collections = await db.list_collection_names()
+        collections =  db.list_collection_names()
         return {"status": "connected", "collections": collections}
     except Exception as e:
         return {"status": "error", "detail": str(e)}
