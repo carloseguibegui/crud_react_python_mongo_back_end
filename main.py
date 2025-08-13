@@ -10,7 +10,12 @@ import os
 from dotenv import load_dotenv
 from bson import ObjectId
 from passlib.context import CryptContext
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
+
+MONGO_URL = os.getenv("MONGO_URL")
+client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
 
 # run app
 # uvicorn main:app --host 0.0.0.0 --port 8000
@@ -20,9 +25,7 @@ from passlib.context import CryptContext
 load_dotenv()
 # Configuración de la base de datos MongoDB
 # MONGO_URL = "mongodb://localhost:27017"
-MONGO_URL = os.getenv("MONGO_URL")
-client = AsyncIOMotorClient(MONGO_URL)
-db  = client.test_database 
+db  = client.crudReactPythonMongo
 print('------------------------')
 print('database connected',db)
 print('------------------------')
