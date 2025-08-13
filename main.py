@@ -17,6 +17,12 @@ from pymongo.server_api import ServerApi
 MONGO_URL = os.getenv("MONGO_URL")
 client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
 
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command('ping')
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+except Exception as e:
+    print(e)
 # run app
 # uvicorn main:app --host 0.0.0.0 --port 8000
 
@@ -28,7 +34,7 @@ load_dotenv()
 db  = client.crudReactPythonMongo
 print('------------------------')
 print('client',client)
-print('get_database',client.get_database())
+print('get_database',client.get_database('python-react-app'))
 print('database connected',db)
 print('------------------------')
 
