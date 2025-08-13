@@ -15,6 +15,7 @@ exceptiongroup = "*"
 python-jose = "*"
 python-dotenv = "*"
 bcrypt = "*"
+passlib = "*"
 
 [dev-packages]
 
