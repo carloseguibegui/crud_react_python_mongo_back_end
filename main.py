@@ -27,6 +27,8 @@ load_dotenv()
 # MONGO_URL = "mongodb://localhost:27017"
 db  = client.crudReactPythonMongo
 print('------------------------')
+print('client',client)
+print('get_database',client.get_database())
 print('database connected',db)
 print('------------------------')
 
