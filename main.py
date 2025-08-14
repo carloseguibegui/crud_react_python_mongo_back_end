@@ -125,9 +125,8 @@ async def register(username: str = Form(...), password: str = Form(...)):
 
 # Endpoint para obtener todos los usuarios (ejemplo)
 @app.get("/api/v1/users")
-async def get_users() -> Dict[str, Any]:
-    users = await db.users.find()  # Limitar a 100 usuarios
-    users = users.to_list(length=100)
+def get_users() -> Dict[str, Any]:
+    users = db.users.find().to_list(length=100)
     for user in users:
         user["_id"] = str(user["_id"])
     return {"users": users}
