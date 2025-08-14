@@ -22,6 +22,7 @@ from starlette.types import ASGIApp, Receive, Send
 import time
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
+from bcrypt import checkpw
 
 # Cargar variables de entorno
 MONGO_URL = os.getenv("MONGO_URL")
@@ -109,7 +110,12 @@ def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str
         # if not verify_password(password, user["password"]):
         #     print("contraseña inválida")
         #     raise HTTPException(status_code=400, detail="Credenciales inválidas")
-
+        print("Verificando contraseña")
+        if not (password == user["password"]):
+            raise HTTPException(status_code=400, detail={"error": "Contraseña incorrecta"})
+        # if not checkpw(password, user["password"]):
+        #     print("Contraseña incorrecta")
+        
         # Generar JWT
         expiration = datetime.now(timezone.utc) + timedelta(hours=1)
         token = jwt.encode({"sub": str(user["_id"]), "exp": expiration}, SECRET_KEY, algorithm=ALGORITHM)
