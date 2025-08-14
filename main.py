@@ -21,7 +21,7 @@ from starlette.responses import Response
 from starlette.types import ASGIApp, Receive, Send
 import time
 from fastapi.middleware.cors import CORSMiddleware
-
+from fastapi.openapi.docs import get_swagger_ui_html
 
 # Cargar variables de entorno
 MONGO_URL = os.getenv("MONGO_URL")
@@ -47,6 +47,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 @app.middleware("http")
 async def add_cors_headers(request: Request, call_next):
@@ -170,3 +171,13 @@ def delete_inventory_item(item_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     return {"message": "Item deleted successfully"}
+
+
+@app.get("/docs")
+async def get_docs():
+    return get_swagger_ui_html(
+        openapi_url="/openapi.json",
+        title="Mi API",
+        swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.24.2/swagger-ui-bundle.js",
+        swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.24.2/swagger-ui.css",
+    )

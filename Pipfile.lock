@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "615f94600c44d2c99bb89bd598d06e738d541d596abe182ee44e142cd5b39a19"
+            "sha256": "2ca3265b5c49610a9bf2f36c945e206b984dfed9e30b8875af230334ce5b3a75"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -26,11 +26,11 @@
         },
         "anyio": {
             "hashes": [
-                "sha256:673c0c244e15788651a4ff38710fea9675823028a6f08a5eda409e0c9840a028",
-                "sha256:9f76d541cad6e36af7beb62e978876f3b41e3e04f2c1fbf0884604c0a9c4d93c"
+                "sha256:3f3fae35c96039744587aa5b8371e7e8e603c0702999535961dd336026973ba6",
+                "sha256:60e474ac86736bbfd6f210f7a61218939c318f43f9972497381f1c5e930ed3d1"
             ],
             "markers": "python_version >= '3.9'",
-            "version": "==4.9.0"
+            "version": "==4.10.0"
         },
         "bcrypt": {
             "hashes": [
@@ -613,6 +613,7 @@
                 "sha256:6ae9aa5db235e4846decc1e7b79c4f346adf41e9777aebeb49dfd09bbd7023d8",
                 "sha256:c5847e96134e5c5371ee9fac6fdf1a67336d5815e09eb2a01fdb57a351ef915b"
             ],
+            "index": "pypi",
             "markers": "python_version >= '3.9'",
             "version": "==0.47.2"
         },
