@@ -12,51 +12,77 @@ from bson import ObjectId
 from passlib.context import CryptContext
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from starlette.middleware import Middleware
+
 from starlette.responses import JSONResponse
-
-MONGO_URL = os.getenv("MONGO_URL")
-client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
-
-class CORSMiddleware(Middleware):
-    async def __call__(self, request: Request, call_next):
-        response = await call_next(request)
-        response.headers["Access-Control-Allow-Origin"] = "https://crud-react-python-mongo-front-end.onrender.com"
-        return response
-
-# Send a ping to confirm a successful connection
-try:
-    client.admin.command('ping')
-    print("Pinged your deployment. You successfully connected to MongoDB!")
-except Exception as e:
-    print(e)
-# run app
-# uvicorn main:app --host 0.0.0.0 --port 8000
+from starlette.middleware import Middleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
+from starlette.types import ASGIApp, Receive, Send
+import time
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # Cargar variables de entorno
+MONGO_URL = os.getenv("MONGO_URL")
+client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
 load_dotenv()
+
 # Configuración de la base de datos MongoDB
 # MONGO_URL = "mongodb://localhost:27017"
-# db  = client.crudReactPythonMongo
 db = client.get_database('python-react-app')
 print('------------------------')
-print('client',client)
-print('get_database',client.get_database('python-react-app'))
 print('database connected',db)
 print('------------------------')
 
 # Inicializar la aplicación
 app = FastAPI()
+# class CORSMiddleware(BaseHTTPMiddleware):
+#     # def __init__(self, allow_origins: list, allow_credentials: bool, allow_methods: list, allow_headers: list):
+#     #     self.allow_origins = allow_origins
+#     #     self.allow_credentials = allow_credentials
+#     #     self.allow_methods = allow_methods
+#     #     self.allow_headers = allow_headers
 
-cors_middleware = CORSMiddleware(
-    allow_origins=["*"],  # Replace "*" with specific origins if needed
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+#     # async def __call__(self, scope: dict, receive: Receive, send: Send) -> None:
+#     #     if scope["type"] != "http":
+#     #         await self.app(scope, receive, send)
+#     #         return
+#     async def dispatch(self, request: Request, call_next):
+#         start_time = time.time()
+#         response = await call_next(request)
+#         process_time=time.time() - start_time
+#         response.headers["X-Process-Time"] = str(process_time)
+#         return response
+#         # request = Request(scope, receive=receive)
+#         # response = await self.app(scope, receive, send)
 
-app.add_middleware(cors_middleware)
+#         # response.headers["Access-Control-Allow-Origin"] = ",".join(self.allow_origins)
+#         # response.headers["Access-Control-Allow-Credentials"] = str(self.allow_credentials).lower()
+#         # response.headers["Access-Control-Allow-Methods"] = ",".join(self.allow_methods)
+#         # response.headers["Access-Control-Allow-Headers"] = ",".join(self.allow_headers)
+
+#         # await send(response)
+
+origins=["*"]
+app.add_middleware(CORSMiddleware, allow_origins=origins)
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],  # Replace "*" with specific origins if needed
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# cors_middleware = CORSMiddleware(
+#     allow_origins=["*"],  # Replace "*" with specific origins if needed
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+
+# app.add_middleware(cors_middleware)
 
 # Modelos
 class InventoryItem(BaseModel):
