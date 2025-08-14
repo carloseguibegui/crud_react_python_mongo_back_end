@@ -95,15 +95,28 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 # Endpoint de autenticación (MongoDB)
 @app.post("/api/v1/auth/login")
 def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str]:
-    user = db.users.find_one({"username": username})
-    if not user or not verify_password(password, user["password"]):  # Verificar contraseña
-        raise HTTPException(status_code=400, detail="Credenciales inválidas")
+    print("Entrando en la función de login")
+    print(f"Username: {username}")
+    print(f"Password: {password}")
+    # user = db.users.find_one({"username": username})
+    try:
+        user = db.get_collection('users').find_one({"username": username})
+        if user is None:
+            print("Usuario no encontrado")
+            raise HTTPException(status_code=400, detail="Usuario no encontrado")
 
-    # Generar JWT
-    expiration = datetime.now(timezone.utc) + timedelta(hours=1)
-    token = jwt.encode({"sub": str(user["_id"]), "exp": expiration}, SECRET_KEY, algorithm=ALGORITHM)
+        print("verificando contraseña")
+        if not verify_password(password, user["password"]):
+            print("contraseña inválida")
+            raise HTTPException(status_code=400, detail="Credenciales inválidas")
 
-    return {"message": "Inicio de sesión exitoso", "token": token}
+        # Generar JWT
+        expiration = datetime.now(timezone.utc) + timedelta(hours=1)
+        token = jwt.encode({"sub": str(user["_id"]), "exp": expiration}, SECRET_KEY, algorithm=ALGORITHM)
+        print("autenticación exitosa, token generado")
+        return {"message": "Inicio de sesión exitoso", "token": token}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error interno del servidor")
 
 # Endpoint para subir archivos
 @app.post("/api/v1/upload")
