@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, Form, HTTPException, Depends
+from fastapi import FastAPI, Request, UploadFile, Form, HTTPException, Depends
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
@@ -12,10 +12,17 @@ from bson import ObjectId
 from passlib.context import CryptContext
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-
+from starlette.middleware import Middleware
+from starlette.responses import JSONResponse
 
 MONGO_URL = os.getenv("MONGO_URL")
 client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
+
+class CORSMiddleware(Middleware):
+    async def __call__(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = "https://crud-react-python-mongo-front-end.onrender.com"
+        return response
 
 # Send a ping to confirm a successful connection
 try:
@@ -42,15 +49,14 @@ print('------------------------')
 # Inicializar la aplicación
 app = FastAPI()
 
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://crud-react-python-mongo-front-end.onrender.com"],
+cors_middleware = CORSMiddleware(
+    allow_origins=["*"],  # Replace "*" with specific origins if needed
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_middleware(cors_middleware)
 
 # Modelos
 class InventoryItem(BaseModel):
