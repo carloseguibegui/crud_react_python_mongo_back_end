@@ -37,52 +37,12 @@ print('------------------------')
 
 # Inicializar la aplicación
 app = FastAPI()
-# class CORSMiddleware(BaseHTTPMiddleware):
-#     # def __init__(self, allow_origins: list, allow_credentials: bool, allow_methods: list, allow_headers: list):
-#     #     self.allow_origins = allow_origins
-#     #     self.allow_credentials = allow_credentials
-#     #     self.allow_methods = allow_methods
-#     #     self.allow_headers = allow_headers
 
-#     # async def __call__(self, scope: dict, receive: Receive, send: Send) -> None:
-#     #     if scope["type"] != "http":
-#     #         await self.app(scope, receive, send)
-#     #         return
-#     async def dispatch(self, request: Request, call_next):
-#         start_time = time.time()
-#         response = await call_next(request)
-#         process_time=time.time() - start_time
-#         response.headers["X-Process-Time"] = str(process_time)
-#         return response
-#         # request = Request(scope, receive=receive)
-#         # response = await self.app(scope, receive, send)
-
-#         # response.headers["Access-Control-Allow-Origin"] = ",".join(self.allow_origins)
-#         # response.headers["Access-Control-Allow-Credentials"] = str(self.allow_credentials).lower()
-#         # response.headers["Access-Control-Allow-Methods"] = ",".join(self.allow_methods)
-#         # response.headers["Access-Control-Allow-Headers"] = ",".join(self.allow_headers)
-
-#         # await send(response)
 
 origins=["*"]
 app.add_middleware(CORSMiddleware, allow_origins=origins)
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],  # Replace "*" with specific origins if needed
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
 
-# cors_middleware = CORSMiddleware(
-#     allow_origins=["*"],  # Replace "*" with specific origins if needed
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
-
-# app.add_middleware(cors_middleware)
 
 # Modelos
 class InventoryItem(BaseModel):
@@ -109,7 +69,7 @@ def hash_password(password: str) -> str:
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id: Optional[str] = payload.get("sub")
@@ -121,8 +81,8 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 
 # Endpoint de autenticación (MongoDB)
 @app.post("/api/v1/auth/login")
-async def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str]:
-    user = await db.users.find_one({"username": username})
+def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str]:
+    user = db.users.find_one({"username": username})
     if not user or not verify_password(password, user["password"]):  # Verificar contraseña
         raise HTTPException(status_code=400, detail="Credenciales inválidas")
 
@@ -145,14 +105,14 @@ def upload_file(file: UploadFile) -> Dict[str, str]:
 
 # Endpoint para registrar usuarios (MongoDB)
 @app.post("/api/v1/auth/register")
-async def register(username: str = Form(...), password: str = Form(...)):
-    existing_user = await db.users.find_one({"username": username})
+def register(username: str = Form(...), password: str = Form(...)):
+    existing_user = db.users.find_one({"username": username})
     if existing_user:
         raise HTTPException(status_code=400, detail="El usuario ya existe")
 
     hashed_password = hash_password(password)  # Cifrar la contraseña
     new_user = {"username": username, "password": hashed_password}
-    await db.users.insert_one(new_user)
+    db.users.insert_one(new_user)
     return {"message": "Usuario registrado exitosamente"}
 
 # Endpoint para obtener todos los usuarios (ejemplo)
@@ -173,28 +133,28 @@ def db_status() -> Dict[str, Any]:
 
 # Endpoints de inventario
 @app.get("/api/v1/inventory", response_model=List[InventoryItem])
-async def get_inventory(current_user: str = Depends(get_current_user)):
-    items = await db.inventory.find({"user_id": current_user}).to_list(100)
+def get_inventory(current_user: str = Depends(get_current_user)):
+    items = db.inventory.find({"user_id": current_user}).to_list(100)
     for item in items:
         item["id"] = str(item["_id"])
     return items
 
 @app.post("/api/v1/inventory", response_model=InventoryItem)
-async def create_inventory_item(item: InventoryItem):
-    result = await db.inventory.insert_one(item.model_dump())
+def create_inventory_item(item: InventoryItem):
+    result = db.inventory.insert_one(item.model_dump())
     item.id = str(result.inserted_id)
     return item
 
 @app.put("/api/v1/inventory/{item_id}", response_model=InventoryItem)
-async def update_inventory_item(item: InventoryItem):
-    result = await db.inventory.update_one({"_id": ObjectId(item.id)}, {"$set": item.model_dump()})
+def update_inventory_item(item: InventoryItem):
+    result = db.inventory.update_one({"_id": ObjectId(item.id)}, {"$set": item.model_dump()})
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     return item
 
 @app.delete("/api/v1/inventory/{item_id}")
-async def delete_inventory_item(item_id: str):
-    result = await db.inventory.delete_one({"_id": ObjectId(item_id)})
+def delete_inventory_item(item_id: str):
+    result = db.inventory.delete_one({"_id": ObjectId(item_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
     return {"message": "Item deleted successfully"}
