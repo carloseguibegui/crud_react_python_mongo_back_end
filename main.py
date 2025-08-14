@@ -39,7 +39,7 @@ print('------------------------')
 app = FastAPI()
 
 
-origins=["*"]
+origins=["https://crud-react-python-mongo-front-end.onrender.com"]
 app.add_middleware(CORSMiddleware, allow_origins=origins)
 
 
