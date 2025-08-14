@@ -31,7 +31,8 @@ except Exception as e:
 load_dotenv()
 # Configuración de la base de datos MongoDB
 # MONGO_URL = "mongodb://localhost:27017"
-db  = client.crudReactPythonMongo
+# db  = client.crudReactPythonMongo
+db = client.get_database('python-react-app')
 print('------------------------')
 print('client',client)
 print('get_database',client.get_database('python-react-app'))
@@ -125,7 +126,8 @@ async def register(username: str = Form(...), password: str = Form(...)):
 # Endpoint para obtener todos los usuarios (ejemplo)
 @app.get("/api/v1/users")
 async def get_users() -> Dict[str, Any]:
-    users = await db.users.find().to_list(length=100)  # Limitar a 100 usuarios
+    users = await db.users.find()  # Limitar a 100 usuarios
+    users = users.to_list(length=100)
     for user in users:
         user["_id"] = str(user["_id"])
     return {"users": users}
