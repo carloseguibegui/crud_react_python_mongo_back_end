@@ -9,7 +9,7 @@ Este proyecto es una API de autenticación y registro de usuarios utilizando Fas
 
 ## Instalación
 - Clona el repositorio: git clone https://github.com/tu-usuario/tu-repositorio.git
-- Instala las dependencias: pip install -r requirements.txt
+- Instala las dependencias: pipenv install
 - Inicia el servidor: uvicorn main:app --host 0.0.0.0 --port 8000
 
 ## Uso
