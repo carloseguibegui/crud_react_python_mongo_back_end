@@ -9,3 +9,5 @@ exceptiongroup
 python-jose
 python-dotenv
 bcrypt
+starlette
+passlib
