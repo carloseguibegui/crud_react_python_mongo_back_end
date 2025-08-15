@@ -183,7 +183,10 @@ def update_inventory_item(item: InventoryItem):
     print('result PUT',result)
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
-    return item
+    return {"item":item, "headers":{
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
+            "Access-Control-Allow-Headers": "*",
+        },}
 
 @app.delete("/api/v1/inventory/{item_id}")
 def delete_inventory_item(item_id: str):
