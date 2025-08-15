@@ -179,6 +179,7 @@ def create_inventory_item(item: InventoryItem):
 
 @app.put("/api/v1/inventory/{item_id}", response_model=InventoryItem)
 def update_inventory_item(item: InventoryItem):
+    print('PUT -> update_inventory_item()')
     result = db.inventory.update_one({"_id": ObjectId(item.id)}, {"$set": item.model_dump()})
     print('result PUT',result)
     if result.modified_count == 0:
