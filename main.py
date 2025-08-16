@@ -168,15 +168,10 @@ def create_inventory_item(item: InventoryItem):
 
 @app.put("/api/v1/inventory/{item_id}", response_model=InventoryItem)
 def update_inventory_item(item: InventoryItem):
-    print('PUT -> update_inventory_item()')
     result = db.inventory.update_one({"_id": ObjectId(item.id)}, {"$set": item.model_dump()})
-    print('result PUT',result)
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Item not found")
-    return {"item":item, "headers":{
-            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE",
-            "Access-Control-Allow-Headers": "*",
-        },}
+    return item
 
 @app.delete("/api/v1/inventory/{item_id}")
 def delete_inventory_item(item_id: str):
