@@ -1,8 +1,6 @@
-from fastapi import FastAPI, Request, UploadFile, Form, HTTPException, Depends
-from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi import FastAPI, UploadFile, Form, HTTPException, Depends
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
-from pymongo.database import Database
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
@@ -13,12 +11,6 @@ from passlib.context import CryptContext
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-from starlette.responses import JSONResponse
-from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
-from starlette.responses import Response
-from starlette.types import ASGIApp, Receive, Send
 import time
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
@@ -95,11 +87,10 @@ def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str
             print("Usuario no encontrado")
             raise HTTPException(status_code=400, detail="Usuario no encontrado")
 
-        # print("verificando contraseña")
-        # if not verify_password(password, user["password"]):
-        #     print("contraseña inválida")
-        #     raise HTTPException(status_code=400, detail="Credenciales inválidas")
-        print("Verificando contraseña")
+        print("verificando contraseña")
+        if not verify_password(password, user["password"]):
+            print("contraseña inválida")
+            raise HTTPException(status_code=400, detail="Credenciales inválidas")
         if not (password == user["password"]):
             raise HTTPException(status_code=400, detail={"error": "Contraseña incorrecta"})
         # if not checkpw(password, user["password"]):
@@ -129,7 +120,7 @@ def upload_file(file: UploadFile) -> Dict[str, str]:
 def register(username: str = Form(...), password: str = Form(...)):
     existing_user = db.users.find_one({"username": username})
     if existing_user:
-        raise HTTPException(status_code=400, detail="El usuario ya existe")
+        raise HTTPException(status_code=400, detail="El nombre de usuario ya está en uso. Elige otro.")
 
     hashed_password = hash_password(password)  # Cifrar la contraseña
     new_user = {"username": username, "password": hashed_password}
