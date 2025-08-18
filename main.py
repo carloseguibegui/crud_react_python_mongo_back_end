@@ -76,7 +76,6 @@ def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str
     print("Entrando en la función de login")
     print(f"Username: {username}")
     print(f"Password: {password}")
-    # user = db.users.find_one({"username": username})
     try:
         user = db.get_collection('users').find_one({"username": username})
         if user is None:
