@@ -1,4 +1,3 @@
-import logging
 from fastapi import FastAPI, UploadFile, Form, HTTPException, Depends
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
@@ -11,7 +10,6 @@ from bson import ObjectId
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import bcrypt
-import time
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
 
@@ -134,7 +132,6 @@ def db_status() -> Dict[str, Any]:
     except Exception as e:
         return {"status": "error", "detail": str(e)}
 
-# Endpoints de inventario
 @app.get("/api/v1/inventory", response_model=List[InventoryItem])
 def get_inventory(current_user: str = Depends(get_current_user)):
     items = db.inventory.find({"user_id": current_user}).to_list(100)
