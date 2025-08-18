@@ -8,21 +8,17 @@ from datetime import datetime, timedelta, timezone
 import os
 from dotenv import load_dotenv
 from bson import ObjectId
-from passlib.context import CryptContext
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-
+import bcrypt
 import time
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
-from bcrypt import checkpw
 
-# Cargar variables de entorno
 MONGO_URL = os.getenv("MONGO_URL")
 client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
 load_dotenv()
 
-# Configuración de la base de datos MongoDB
 # MONGO_URL = "mongodb://localhost:27017"
 db = client.get_database('python-react-app')
 print('------------------------')
@@ -54,17 +50,13 @@ ALGORITHM = "HS256"
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-# Configuración de bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-logging.getLogger('passlib').setLevel(logging.ERROR)
+def hash_password(password: str):
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed
 
-# Función para cifrar contraseñas
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-# Función para verificar contraseñas
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(password: str, hashed_password: bytes) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
@@ -95,8 +87,6 @@ def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str
             raise HTTPException(status_code=400, detail="Credenciales inválidas")
         if not (password == user["password"]):
             raise HTTPException(status_code=400, detail={"error": "Contraseña incorrecta"})
-        # if not checkpw(password, user["password"]):
-        #     print("Contraseña incorrecta")
         
         # Generar JWT
         expiration = datetime.now(timezone.utc) + timedelta(hours=1)

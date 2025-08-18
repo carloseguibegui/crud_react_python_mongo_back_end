@@ -15,7 +15,6 @@ exceptiongroup = "*"
 python-jose = "*"
 python-dotenv = "*"
 bcrypt = "*"
-passlib = "*"
 starlette = "*"
 
 [dev-packages]
