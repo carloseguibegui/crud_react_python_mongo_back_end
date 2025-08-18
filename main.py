@@ -56,7 +56,9 @@ def hash_password(password: str):
     return hashed
 
 def verify_password(password: str, hashed_password: bytes) -> bool:
-    return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
+    resp = bcrypt.checkpw(password.encode('utf-8'), hashed_password)
+    print('verify_password', resp)
+    return resp
 
 def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
@@ -85,8 +87,6 @@ def login(username: str = Form(...), password: str = Form(...)) -> Dict[str, str
         if not verify_password(password, user["password"]):
             print("contraseña inválida")
             raise HTTPException(status_code=400, detail="Credenciales inválidas")
-        if not (password == user["password"]):
-            raise HTTPException(status_code=400, detail={"error": "Contraseña incorrecta"})
         
         # Generar JWT
         expiration = datetime.now(timezone.utc) + timedelta(hours=1)
