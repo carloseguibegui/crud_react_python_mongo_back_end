@@ -1,3 +1,4 @@
+import logging
 from fastapi import FastAPI, UploadFile, Form, HTTPException, Depends
 from typing import Dict, Any, List, Optional
 from pydantic import BaseModel
@@ -55,6 +56,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 # Configuración de bcrypt
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+logging.getLogger('passlib').setLevel(logging.ERROR)
 
 # Función para cifrar contraseñas
 def hash_password(password: str) -> str:
