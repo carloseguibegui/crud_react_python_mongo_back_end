@@ -16,6 +16,7 @@ python-jose = "*"
 python-dotenv = "*"
 bcrypt = "*"
 starlette = "*"
+pyisemail = "*"
 
 [dev-packages]
 

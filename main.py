@@ -12,12 +12,13 @@ from pymongo.server_api import ServerApi
 import bcrypt
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.openapi.docs import get_swagger_ui_html
+from pyisemail import is_email
+
 
 MONGO_URL = os.getenv("MONGO_URL")
 client = MongoClient(MONGO_URL, server_api=ServerApi("1"))
 load_dotenv()
 
-# MONGO_URL = "mongodb://localhost:27017"
 db = client.get_database('python-react-app')
 print('------------------------')
 print('database connected',db)
@@ -168,3 +169,8 @@ async def get_docs():
         swagger_js_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.24.2/swagger-ui-bundle.js",
         swagger_css_url="https://cdn.jsdelivr.net/npm/swagger-ui-dist@3.24.2/swagger-ui.css",
     )
+
+
+@app.post("/api/v1/auth/verify-email")
+def verify_email(email: str = Form(...)):
+    return {"is_valid": is_email(email,check_dns=True)}

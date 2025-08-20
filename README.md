@@ -2,6 +2,9 @@
 [link back-end](https://crud-react-python-mongo-back-end.onrender.com)
 [link front-end](https://crud-react-python-mongo-front-end.onrender.com)
 
+## URL DOCS SWAGGER
+[docs](https://crud-react-python-mongo-back-end.onrender.com/docs)
+
 ## Descripción del proyecto
 Este proyecto es una API de autenticación y registro de usuarios utilizando FastAPI y MongoDB.
 

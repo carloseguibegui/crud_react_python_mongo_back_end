@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "39aded1b1f3f6009c82ebf6b893a36babf17584f2f741faaf305ddc7e3e325ad"
+            "sha256": "943e7e3374e78f3a5771f4a96d4484a1a226276015c72c44f174f2a0b2188c85"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -234,14 +234,6 @@
             "markers": "python_version >= '3.9'",
             "version": "==3.7.1"
         },
-        "passlib": {
-            "hashes": [
-                "sha256:aa6bca462b8d8bda89c70b382f0c298a20b5560af6cbfa2dce410c0a2fb669f1",
-                "sha256:defd50f72b65c5402ab2c573830a6978e5f202ad0d984793c8dde2c4152ebe04"
-            ],
-            "index": "pypi",
-            "version": "==1.7.4"
-        },
         "psycopg2-binary": {
             "hashes": [
                 "sha256:04392983d0bb89a8717772a193cfaac58871321e3ec69514e1c4e0d4957b5aff",
@@ -437,6 +429,15 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==2.33.2"
+        },
+        "pyisemail": {
+            "hashes": [
+                "sha256:3d2bebd159f436673219d024a3f02bed1b468c793df9a5fa08d72b7d4b4f6cb4",
+                "sha256:daf4b3fb2150a38f406b0aaba729e19fcd638a6d1c0549c25ff54c7b804618f8"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==2.0.1"
         },
         "pymongo": {
             "hashes": [
